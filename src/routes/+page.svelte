@@ -4,19 +4,31 @@
 	import { subjects } from '$lib/shared-data.svelte';
 
 	let { data } = $props();
-	subjects.push(...data.subjects);
+	if (subjects.length === 0) {
+		subjects.push(...data.subjects);
+	}
 </script>
 
 <div class="grid h-full grid-cols-2 grid-rows-[auto_1fr] gap-4">
-	<p class="text-white">
-		Hackathon 2025, 17. januar. Chat med Strømbot her for at få svar på spørgsmål
+	<p class="col-span-2 text-white">
+		Hackathon 2025 er den 17. januar. Chat med Strømbot her for at få svar på dine spørgsmål og
+		idéer til emner.
 	</p>
-	<p class="text-white">Se og stem på emner herunder, og opret dine egne</p>
 	<Chat />
 
-	<div class="flex flex-col gap-2">
-		{#each subjects as subject}
-			<Subject {subject} />
-		{/each}
+	<div class="grid h-full grid-rows-[1fr_auto] gap-4 overflow-hidden">
+		<div class="flex flex-col gap-2 overflow-y-auto">
+			{#each subjects as subject (subject.id)}
+				<Subject {subject} />
+			{/each}
+		</div>
+		<Subject
+			subject={{
+				description: '',
+				emoji: '',
+				name: ''
+			}}
+			editable
+		/>
 	</div>
 </div>

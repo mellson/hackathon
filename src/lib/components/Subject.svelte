@@ -1,39 +1,136 @@
 <script lang="ts">
-	import type { SelectSubject } from '$lib/server/db/schema';
+	import { getBrowserId } from '$lib/device-utils';
+	import type { InsertSubject } from '$lib/server/db/schema';
+	import { subjects } from '$lib/shared-data.svelte';
+	import NumberFlow, { type Format } from '@number-flow/svelte';
+	import clsx from 'clsx/lite';
+	import { Heart } from 'lucide-svelte';
 
 	let {
 		subject,
 		editable = false
-	}: { subject: Omit<SelectSubject, 'id'> & { likes?: number }; editable?: boolean } = $props();
+	}: {
+		subject: {
+			name: string;
+			description: string;
+			emoji: string;
+			id?: number;
+			likes?: number;
+			deviceIds?: string[];
+		};
+		editable?: boolean;
+	} = $props();
+
+	let canBeEdited = $state(editable);
+	let numberOfLikes = $state(subject.likes ?? 0);
+	let liked = $state(subject.deviceIds?.includes(getBrowserId() ?? '') ?? false);
+	let isLoading = $state(false);
+	let isCreatingSubject = $state(false);
+
+	const format: Format = {
+		notation: 'compact',
+		compactDisplay: 'short',
+		roundingMode: 'trunc'
+	};
+
+	async function createSubject(subject: InsertSubject) {
+		isCreatingSubject = true;
+		canBeEdited = false;
+		try {
+			const response = await fetch('/api/subjects', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify(subject)
+			});
+
+			if (!response.ok) throw new Error('Failed to create subject');
+			const created = await response.json();
+			subjects.unshift({ ...created, likes: 0 });
+		} catch (error) {
+			console.error('Error creating subject:', error);
+			// You might want to show an error message to the user here
+		} finally {
+			isCreatingSubject = false;
+		}
+	}
+
+	async function onlike() {
+		const browserId = getBrowserId();
+		if (!browserId || !subject.id || isLoading) return;
+
+		isLoading = true;
+		try {
+			const response = await fetch(`/api/subjects/${subject.id}/like`, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ browserId })
+			});
+
+			if (!response.ok) throw new Error('Failed to like subject');
+
+			const { liked: newLikedState } = await response.json();
+			liked = newLikedState;
+			numberOfLikes = numberOfLikes + (newLikedState ? 1 : -1);
+		} catch (error) {
+			console.error('Error liking subject:', error);
+		} finally {
+			isLoading = false;
+		}
+	}
 </script>
 
 <div
-	class="overflow-hidden rounded-md bg-teal-100 p-4 text-black hover:bg-teal-200 hover:shadow-lg"
+	class="rounded-md bg-teal-100 p-4 text-black hover:bg-teal-200 hover:shadow-lg"
+	class:bg-yellow-100={canBeEdited}
 >
-	<div class="flex items-center justify-between">
+	<div class="grid grid-cols-[1fr_auto]">
 		<input
 			bind:value={subject.name}
+			placeholder="Navn..."
 			class="w-full border-none bg-transparent p-0 text-lg font-bold"
-			class:focus:ring-0={!editable}
-			readonly={!editable}
+			class:focus:ring-0={!canBeEdited}
+			readonly={!canBeEdited}
 		/>
-		<input
-			bind:value={subject.emoji}
-			class="w-12 border-none bg-transparent p-0 text-right text-xl"
-			class:focus:ring-0={!editable}
-			readonly={!editable}
-		/>
+		<p class="text-xl">{subject.emoji}</p>
 	</div>
 	<textarea
 		bind:value={subject.description}
+		placeholder="Beskrivelse..."
 		class="autosizer w-full border-none bg-transparent p-0 text-sm"
-		class:focus:ring-0={!editable}
-		class:resize-none={!editable}
-		readonly={!editable}
+		class:focus:ring-0={!canBeEdited}
+		class:resize-none={!canBeEdited}
+		readonly={!canBeEdited}
 		rows="3"
 	></textarea>
 	{#if subject.likes !== undefined}
-		<p>{subject.likes}</p>
+		<button
+			class="group float-end flex items-center gap-1.5 pr-1.5 transition-[color] hover:text-pink-500"
+			class:text-pink-500={liked}
+			onclick={onlike}
+		>
+			<div
+				class="relative before:absolute before:-inset-2.5 before:rounded-full before:transition-[background-color] before:group-hover:bg-pink-500/10"
+			>
+				<Heart
+					absoluteStrokeWidth
+					class={clsx(
+						liked && 'fill-current',
+						'~size-4/5 group-active:spring-duration-[25] spring-bounce-[65] spring-duration-300 transition-transform group-active:scale-[80%]'
+					)}
+				/>
+			</div>
+			<NumberFlow willChange continuous value={numberOfLikes} {format} />
+		</button>
+	{/if}
+	{#if canBeEdited}
+		<button
+			class="float-end rounded bg-orange-400 px-2 py-1 text-xs hover:bg-orange-600 hover:shadow-lg"
+			class:opacity-50={isCreatingSubject}
+			onclick={() => createSubject(subject)}
+			disabled={isCreatingSubject}
+		>
+			{isCreatingSubject ? 'Opretter...' : 'Opret emne'}
+		</button>
 	{/if}
 </div>
 

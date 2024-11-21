@@ -4,4 +4,5 @@ export const subjects: {
 	name: string;
 	description: string;
 	likes: number;
+	deviceIds: string[];
 }[] = $state([]);

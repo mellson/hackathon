@@ -1,7 +1,7 @@
 import { db } from '$lib/server/db';
 import { subjectLikesTable, subjectsTable } from '$lib/server/db/schema';
 import { redirect } from '@sveltejs/kit';
-import { count, eq, getTableColumns } from 'drizzle-orm';
+import { desc, eq, getTableColumns, sql } from 'drizzle-orm';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ cookies }) => {
@@ -11,13 +11,26 @@ export const load: PageServerLoad = async ({ cookies }) => {
 		throw redirect(303, '/login');
 	}
 
-	const subjects = await db
+	const rawSubjects = await db
 		.select({
 			...getTableColumns(subjectsTable),
-			likes: count(subjectLikesTable.subjectId)
+			likes: sql<number>`count(${subjectLikesTable.deviceId})::int`,
+			deviceIds: sql<string[]>`array_agg(${subjectLikesTable.deviceId})`
 		})
 		.from(subjectsTable)
 		.leftJoin(subjectLikesTable, eq(subjectsTable.id, subjectLikesTable.subjectId))
-		.groupBy(subjectsTable.id);
-	return { subjects };
+		.groupBy(subjectsTable.id)
+		.orderBy(desc(subjectsTable.id));
+
+	// Clean up null deviceIds (when there are no likes)
+	const subjectsWithDeviceIds = rawSubjects.map((subject) => ({
+		...subject,
+		deviceIds: subject.deviceIds[0] === null ? [] : subject.deviceIds
+	}));
+
+	const sortedByNumberOfLikes = subjectsWithDeviceIds.sort((a, b) => b.likes - a.likes);
+
+	return {
+		subjects: sortedByNumberOfLikes
+	};
 };

@@ -7,12 +7,11 @@ const SubjectSchema = z.object({
 	emoji: z.string()
 });
 
-type Subject = z.infer<typeof SubjectSchema>;
-
-export function parseToolResult(toolInvocations: Message['toolInvocations']): Subject | null {
+export function parseToolResult(toolInvocations: Message['toolInvocations']) {
 	try {
 		const invocation = toolInvocations?.find((invocation) => invocation.state === 'result');
-		return SubjectSchema.parse(invocation?.result);
+		const subjectWithoutId = SubjectSchema.parse(invocation?.result);
+		return subjectWithoutId;
 	} catch (error) {
 		console.error('Failed to parse tool result:', error);
 		return null;
