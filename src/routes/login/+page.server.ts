@@ -7,9 +7,6 @@ export const actions = {
 		const password = data.get('password');
 
 		if (password === env.PASSWORD) {
-			console.log(env.NODE_ENV);
-			console.log(env.PASSWORD);
-
 			cookies.set('session', 'authenticated', {
 				path: '/',
 				httpOnly: true,

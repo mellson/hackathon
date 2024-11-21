@@ -1,5 +1,6 @@
 import { createAnthropic } from '@ai-sdk/anthropic';
-import { streamText } from 'ai';
+import { streamText, tool } from 'ai';
+import { z } from 'zod';
 import type { RequestHandler } from './$types';
 
 import { env } from '$env/dynamic/private';
@@ -28,8 +29,24 @@ export const POST = (async ({ request }) => {
 		I dag er det den ${new Date().toLocaleDateString('da-DK')}.
 		Formater dit svar som html kode så det kan se pænt ud i en browser.
 		Svar ikke inden i en blok der starter med \`\`\`html. Send svaret direkte.
+		Brug ikke css til at style dine svar.
 		Brug gerne emojis til at gøre dine svar sjovere.
+		Når du hjælper brugeren med at lave et emne, så husk at det skal være noget der kan hjælpe med at gøre hverdagen nemmere for en udvikler.
+		Sørg for at emnet er så konkret som muligt.
 		`,
+		tools: {
+			subject: tool({
+				description: 'Create a new subject',
+				parameters: z.object({
+					name: z.string().describe('The name of the subject'),
+					description: z.string().describe('A description of the subject'),
+					emoji: z.string().describe('An emoji that represents the subject')
+				}),
+				execute: async ({ name, description, emoji }) => {
+					return { name, description, emoji };
+				}
+			})
+		},
 		messages
 	});
 
