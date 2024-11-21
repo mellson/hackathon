@@ -4,6 +4,7 @@
 
 <form method="POST" class="flex h-screen items-center justify-center gap-4">
 	<input
+		autofocus
 		type="password"
 		name="password"
 		placeholder="Hemmelig kode"
