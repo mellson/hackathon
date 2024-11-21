@@ -11,7 +11,8 @@ export const actions = {
 				path: '/',
 				httpOnly: true,
 				sameSite: 'strict',
-				secure: true
+				secure: true,
+				domain: env.NODE_ENV === 'production' ? 'mellson.dev' : undefined
 			});
 			throw redirect(303, '/');
 		}

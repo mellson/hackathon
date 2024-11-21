@@ -2,13 +2,15 @@
 	<title>Hack dit login</title>
 </svelte:head>
 
-<form method="POST" class="flex h-screen items-center justify-center gap-4">
-	<input
-		autofocus
-		type="password"
-		name="password"
-		placeholder="Hemmelig kode"
-		class="rounded-md border border-gray-300 p-2"
-	/>
-	<button type="submit" class="rounded-md bg-teal-500 px-4 py-2 text-white">Luk mig ind</button>
-</form>
+<div class="flex h-screen flex-col items-center justify-center gap-2">
+	<div class="text-center text-2xl text-white">Velkommen til Energinet hackathon 2025</div>
+	<form method="POST" class="mx-16 w-full rounded-md bg-teal-700 p-2 text-white">
+		<input
+			autofocus
+			type="password"
+			name="password"
+			placeholder="Indtast din hemmelige kode"
+			class="w-full border-none bg-transparent text-lg placeholder:text-teal-300 focus:ring-0"
+		/>
+	</form>
+</div>

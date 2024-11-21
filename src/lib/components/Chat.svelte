@@ -31,7 +31,5 @@
 			classes={`text-teal-300 transition-opacity duration-500 ${$isLoading ? 'opacity-100' : 'opacity-0'}`}
 			isHovered={$isLoading}
 		/>
-
-		<button type="submit" hidden disabled={$isLoading}>Send</button>
 	</form>
 </div>
