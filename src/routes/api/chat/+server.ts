@@ -4,6 +4,8 @@ import { z } from 'zod';
 import type { RequestHandler } from './$types';
 
 import { env } from '$env/dynamic/private';
+import { db } from '$lib/server/db';
+import { subjectsTable } from '$lib/server/db/schema';
 
 const anthropic = createAnthropic({
 	apiKey: env.ANTHROPIC_API_KEY ?? ''
@@ -11,6 +13,7 @@ const anthropic = createAnthropic({
 
 export const POST = (async ({ request }) => {
 	const { messages } = await request.json();
+	const existingSubjects = await db.select({ name: subjectsTable.name }).from(subjectsTable);
 
 	const result = streamText({
 		model: anthropic('claude-3-5-haiku-latest'),
@@ -33,6 +36,8 @@ export const POST = (async ({ request }) => {
 		Brug gerne emojis til at gøre dine svar sjovere.
 		Når du hjælper brugeren med at lave et emne, så husk at det skal være noget der kan hjælpe med at gøre hverdagen nemmere for en udvikler.
 		Sørg for at emnet er så konkret som muligt.
+		Når du hjælper brugeren med at lave et emne, så sørg for at det ikke allerede findes blandt følgende emner:
+		<existingSubjects>${existingSubjects.map((subject) => subject.name).join(', ')}</existingSubjects>
 		`,
 		tools: {
 			subject: tool({

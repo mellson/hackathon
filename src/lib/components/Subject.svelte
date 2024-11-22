@@ -8,7 +8,8 @@
 
 	let {
 		subject,
-		editable = false
+		editable = false,
+		resetAfterCreate = false
 	}: {
 		subject: {
 			name: string;
@@ -19,8 +20,10 @@
 			deviceIds?: string[];
 		};
 		editable?: boolean;
+		resetAfterCreate?: boolean;
 	} = $props();
 
+	let internalSubject = $state(subject);
 	let canBeEdited = $state(editable);
 	let numberOfLikes = $state(subject.likes ?? 0);
 	let liked = $state(subject.deviceIds?.includes(getBrowserId() ?? '') ?? false);
@@ -51,16 +54,24 @@
 			// You might want to show an error message to the user here
 		} finally {
 			isCreatingSubject = false;
+			if (resetAfterCreate) {
+				canBeEdited = true;
+				internalSubject = {
+					name: '',
+					description: '',
+					emoji: ''
+				};
+			}
 		}
 	}
 
 	async function onlike() {
 		const browserId = getBrowserId();
-		if (!browserId || !subject.id || isLoading) return;
+		if (!browserId || !internalSubject.id || isLoading) return;
 
 		isLoading = true;
 		try {
-			const response = await fetch(`/api/subjects/${subject.id}/like`, {
+			const response = await fetch(`/api/subjects/${internalSubject.id}/like`, {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({ browserId })
@@ -82,19 +93,20 @@
 <div
 	class="rounded-md bg-teal-100 p-4 text-black hover:bg-teal-200 hover:shadow-lg"
 	class:bg-yellow-100={canBeEdited}
+	class:hover:bg-yellow-200={canBeEdited}
 >
 	<div class="grid grid-cols-[1fr_auto]">
 		<input
-			bind:value={subject.name}
+			bind:value={internalSubject.name}
 			placeholder="Navn..."
 			class="w-full border-none bg-transparent p-0 text-lg font-bold"
 			class:focus:ring-0={!canBeEdited}
 			readonly={!canBeEdited}
 		/>
-		<p class="text-xl">{subject.emoji}</p>
+		<p class="text-xl">{internalSubject.emoji}</p>
 	</div>
 	<textarea
-		bind:value={subject.description}
+		bind:value={internalSubject.description}
 		placeholder="Beskrivelse..."
 		class="autosizer w-full border-none bg-transparent p-0 text-sm"
 		class:focus:ring-0={!canBeEdited}
@@ -102,7 +114,7 @@
 		readonly={!canBeEdited}
 		rows="3"
 	></textarea>
-	{#if subject.likes !== undefined}
+	{#if internalSubject.likes !== undefined}
 		<button
 			class="group float-end flex items-center gap-1.5 pr-1.5 transition-[color] hover:text-pink-500"
 			class:text-pink-500={liked}
@@ -126,7 +138,7 @@
 		<button
 			class="float-end rounded bg-orange-400 px-2 py-1 text-xs hover:bg-orange-600 hover:shadow-lg"
 			class:opacity-50={isCreatingSubject}
-			onclick={() => createSubject(subject)}
+			onclick={() => createSubject(internalSubject)}
 			disabled={isCreatingSubject}
 		>
 			{isCreatingSubject ? 'Opretter...' : 'Opret emne'}

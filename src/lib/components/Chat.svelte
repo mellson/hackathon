@@ -2,14 +2,29 @@
 	import { formatRole } from '$lib/utils/format';
 	import { parseToolResult } from '$lib/utils/parse-tool-result';
 	import { useChat } from '@ai-sdk/svelte';
+	import { afterUpdate } from 'svelte';
 	import TerminalIcon from './icons/TerminalIcon.svelte';
 	import Subject from './Subject.svelte';
 
 	const { input, handleSubmit, messages, isLoading } = useChat();
+
+	let messagesContainer: HTMLUListElement;
+
+	afterUpdate(() => {
+		if ($messages.length > 0) {
+			messagesContainer?.scrollTo({
+				top: messagesContainer.scrollHeight,
+				behavior: 'smooth'
+			});
+		}
+	});
 </script>
 
 <div class="grid h-full grid-rows-[1fr_auto] gap-2 overflow-y-auto">
-	<ul class="flex h-full flex-col gap-1 overflow-y-auto pr-2 text-white">
+	<ul
+		bind:this={messagesContainer}
+		class="flex h-full flex-col gap-1 overflow-y-auto pr-2 text-white"
+	>
 		{#each $messages as message}
 			<li class="flex flex-col" class:text-gray-400={message.role === 'user'}>
 				<span class="text-xs font-thin opacity-50">{formatRole(message.role)}</span>

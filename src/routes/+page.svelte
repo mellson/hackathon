@@ -29,6 +29,7 @@
 				name: ''
 			}}
 			editable
+			resetAfterCreate
 		/>
 	</div>
 </div>
