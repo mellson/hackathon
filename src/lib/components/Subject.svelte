@@ -69,6 +69,8 @@
 		const browserId = getBrowserId();
 		if (!browserId || !internalSubject.id || isLoading) return;
 
+		liked = true;
+		numberOfLikes++;
 		isLoading = true;
 		try {
 			const response = await fetch(`/api/subjects/${internalSubject.id}/like`, {
@@ -79,9 +81,7 @@
 
 			if (!response.ok) throw new Error('Failed to like subject');
 
-			const { liked: newLikedState } = await response.json();
-			liked = newLikedState;
-			numberOfLikes = numberOfLikes + (newLikedState ? 1 : -1);
+			await response.json();
 		} catch (error) {
 			console.error('Error liking subject:', error);
 		} finally {
