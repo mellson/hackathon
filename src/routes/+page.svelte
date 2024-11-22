@@ -11,7 +11,7 @@
 
 <div class="grid h-full grid-cols-2 grid-rows-[auto_1fr] gap-4">
 	<p class="col-span-2 text-white">
-		Hackathon 2025 er den 17. januar. Chat med Strømbot her for at få svar på dine spørgsmål og
+		Hackathon 2025 er den 16. januar. Chat med Strømbot her for at få svar på dine spørgsmål og
 		idéer til emner.
 	</p>
 	<Chat />
