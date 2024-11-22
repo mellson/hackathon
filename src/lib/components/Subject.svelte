@@ -69,8 +69,8 @@
 		const browserId = getBrowserId();
 		if (!browserId || !internalSubject.id || isLoading) return;
 
-		liked = true;
-		numberOfLikes++;
+		numberOfLikes = liked ? numberOfLikes - 1 : numberOfLikes + 1;
+		liked = !liked;
 		isLoading = true;
 		try {
 			const response = await fetch(`/api/subjects/${internalSubject.id}/like`, {
