@@ -12,7 +12,7 @@ export const actions = {
 				httpOnly: true,
 				sameSite: 'strict',
 				secure: true,
-				domain: env.NODE_ENV === 'production' ? 'vercel.app' : undefined
+				domain: env.NODE_ENV === 'production' ? 'energinet-hackathon.vercel.app' : undefined
 			});
 			throw redirect(303, '/');
 		}

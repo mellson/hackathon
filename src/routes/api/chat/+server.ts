@@ -16,7 +16,7 @@ export const POST = (async ({ request }) => {
 	const existingSubjects = await db.select({ name: subjectsTable.name }).from(subjectsTable);
 
 	const result = streamText({
-		model: anthropic('claude-3-5-haiku-latest'),
+		model: anthropic('claude-3-5-sonnet-latest'),
 		system: `
 		Du er en hjælpsom assistent som kan svare på spørgsmål om emner.
 		Du svarer kort og præcist, på dansk (medmindre det er nævnt at du skal svare på engelsk).
