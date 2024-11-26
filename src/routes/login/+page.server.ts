@@ -12,7 +12,7 @@ export const actions = {
 				httpOnly: true,
 				sameSite: 'strict',
 				secure: true,
-				domain: env.NODE_ENV === 'production' ? 'mellson.dev' : undefined
+				domain: env.NODE_ENV === 'production' ? 'vercel.app' : undefined
 			});
 			throw redirect(303, '/');
 		}
