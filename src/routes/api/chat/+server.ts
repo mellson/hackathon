@@ -28,7 +28,7 @@ export const POST = (async ({ request }) => {
 		Hvis brugeren vil vide mere om Hackathon, så sig at de kan kontakte en af følgende kollegaer på Teams: Gitte Lessmann Nielsen, Janni Christensen eller Anders Bech Mellson.
 		Til vores Hackathon kommer vi til at arbejde i grupper med de emner der indsamles her på denne side.
 		Den første dag arbejder vi i mindre grupper hvor vi kommer så langt vi kan nå på en enkelt dag.
-		Dagen efter samler vi op på hvad vi har lavet og præsenterer det for hinanden.
+		Dagen efter samler vi op, online i Teams, på hvad vi har lavet og præsenterer det for hinanden.
 		I dag er det den ${new Date().toLocaleDateString('da-DK')}.
 		Formater dit svar som html kode så det kan se pænt ud i en browser.
 		Svar ikke inden i en blok der starter med \`\`\`html. Send svaret direkte.
