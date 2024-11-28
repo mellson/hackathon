@@ -11,6 +11,10 @@
 	let messagesContainer: HTMLUListElement;
 
 	afterUpdate(() => {
+		if ($messages.length === 0) {
+			input.set('Kan du fortælle mig lidt mere om hackathon dagen?');
+			handleSubmit();
+		}
 		if ($messages.length > 0) {
 			messagesContainer?.scrollTo({
 				top: messagesContainer.scrollHeight,
