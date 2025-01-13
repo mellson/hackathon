@@ -14,5 +14,5 @@
 			class="w-full border-none bg-transparent text-lg placeholder:text-teal-300 focus:ring-0"
 		/>
 	</form>
-	<p class="text-center text-xs text-gray-400">ps. Siden her fungerer kun i Chrome og Edge.</p>
+	<p class="text-center text-xs text-gray-400">ps. Siden her fungerer bedst i Chrome og Edge.</p>
 </div>
