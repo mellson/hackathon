@@ -6,7 +6,9 @@
 	import TerminalIcon from './icons/TerminalIcon.svelte';
 	import Subject from './Subject.svelte';
 
-	const { input, handleSubmit, messages, isLoading } = useChat();
+	const { input, handleSubmit, messages, isLoading } = useChat({
+		api: '/api/chat'
+	});
 
 	let messagesContainer: HTMLUListElement;
 

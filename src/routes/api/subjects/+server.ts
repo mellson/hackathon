@@ -1,4 +1,4 @@
-import { db } from '$lib/server/db';
+import { db, queryWithRetries } from '$lib/server/db';
 import { subjectsTable } from '$lib/server/db/schema';
 import { createAnthropic } from '@ai-sdk/anthropic';
 import { json } from '@sveltejs/kit';
@@ -15,8 +15,13 @@ export const POST: RequestHandler = async ({ request, cookies }) => {
 
 	const subject = await request.json();
 	if (!subject.emoji) {
+		// Ensure API key is set
+		if (!env.ANTHROPIC_API_KEY) {
+			throw new Error('ANTHROPIC_API_KEY is not set');
+		}
+
 		const anthropic = createAnthropic({
-			apiKey: env.ANTHROPIC_API_KEY ?? ''
+			apiKey: env.ANTHROPIC_API_KEY
 		});
 		const result = await generateText({
 			model: anthropic('claude-3-5-haiku-latest'),
@@ -24,6 +29,6 @@ export const POST: RequestHandler = async ({ request, cookies }) => {
 		});
 		subject.emoji = result.text;
 	}
-	const [created] = await db.insert(subjectsTable).values(subject).returning();
+	const [created] = await queryWithRetries(() => db.insert(subjectsTable).values(subject).returning());
 	return json(created);
 };

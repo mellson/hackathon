@@ -1,4 +1,4 @@
-import { db } from '$lib/server/db';
+import { db, queryWithRetries } from '$lib/server/db';
 import { subjectLikesTable, subjectsTable } from '$lib/server/db/schema';
 import { redirect } from '@sveltejs/kit';
 import { desc, eq, getTableColumns, sql } from 'drizzle-orm';
@@ -11,7 +11,7 @@ export const load: PageServerLoad = async ({ cookies }) => {
 		throw redirect(303, '/login');
 	}
 
-	const rawSubjects = await db
+	const rawSubjects = await queryWithRetries(() => db
 		.select({
 			...getTableColumns(subjectsTable),
 			likes: sql<number>`count(${subjectLikesTable.deviceId})::int`,
@@ -20,7 +20,7 @@ export const load: PageServerLoad = async ({ cookies }) => {
 		.from(subjectsTable)
 		.leftJoin(subjectLikesTable, eq(subjectsTable.id, subjectLikesTable.subjectId))
 		.groupBy(subjectsTable.id)
-		.orderBy(desc(subjectsTable.id));
+		.orderBy(desc(subjectsTable.id)));
 
 	// Clean up null deviceIds (when there are no likes)
 	const subjectsWithDeviceIds = rawSubjects.map((subject) => ({

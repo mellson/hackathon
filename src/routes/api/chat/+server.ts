@@ -7,11 +7,22 @@ import { env } from '$env/dynamic/private';
 import { db } from '$lib/server/db';
 import { subjectsTable } from '$lib/server/db/schema';
 
+// Ensure API key is set
+if (!env.ANTHROPIC_API_KEY) {
+	throw new Error('ANTHROPIC_API_KEY is not set');
+}
+
 const anthropic = createAnthropic({
-	apiKey: env.ANTHROPIC_API_KEY ?? ''
+	apiKey: env.ANTHROPIC_API_KEY
 });
 
-export const POST = (async ({ request }) => {
+export const POST = (async ({ request, cookies }) => {
+	// Check authentication
+	const session = cookies.get('session');
+	if (!session || session !== 'authenticated') {
+		return new Response('Unauthorized', { status: 401 });
+	}
+
 	const { messages } = await request.json();
 	const existingSubjects = await db.select({ name: subjectsTable.name }).from(subjectsTable);
 

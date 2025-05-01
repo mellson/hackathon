@@ -1,5 +1,6 @@
 import { env } from '$env/dynamic/private';
 import { fail, redirect } from '@sveltejs/kit';
+import type { Actions } from './$types';
 
 export const actions = {
 	default: async ({ request, cookies }) => {
@@ -7,6 +8,10 @@ export const actions = {
 		const password = data.get('password');
 
 		if (password === env.PASSWORD) {
+			// Set expiration to 24 hours from now
+			const expires = new Date();
+			expires.setHours(expires.getHours() + 24);
+
 			cookies.set('session', 'authenticated', {
 				path: '/',
 				httpOnly: true,
@@ -19,4 +24,4 @@ export const actions = {
 
 		return fail(401, { success: false });
 	}
-};
+} satisfies Actions;

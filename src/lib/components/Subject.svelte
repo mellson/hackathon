@@ -69,9 +69,15 @@
 		const browserId = getBrowserId();
 		if (!browserId || !internalSubject.id || isLoading) return;
 
+		// Store original state to revert if needed
+		const originalLiked = liked;
+		const originalNumberOfLikes = numberOfLikes;
+
+		// Optimistically update UI
 		numberOfLikes = liked ? numberOfLikes - 1 : numberOfLikes + 1;
 		liked = !liked;
 		isLoading = true;
+
 		try {
 			const response = await fetch(`/api/subjects/${internalSubject.id}/like`, {
 				method: 'POST',
@@ -79,11 +85,20 @@
 				body: JSON.stringify({ browserId })
 			});
 
-			if (!response.ok) throw new Error('Failed to like subject');
+			if (!response.ok) {
+				throw new Error('Failed to like subject');
+			}
 
-			await response.json();
+			const result = await response.json();
+
+			// Update with actual server state
+			liked = result.liked;
+			numberOfLikes = liked ? originalNumberOfLikes + 1 : originalNumberOfLikes - 1;
 		} catch (error) {
 			console.error('Error liking subject:', error);
+			// Revert to original state on error
+			liked = originalLiked;
+			numberOfLikes = originalNumberOfLikes;
 		} finally {
 			isLoading = false;
 		}

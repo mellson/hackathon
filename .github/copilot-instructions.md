@@ -1,0 +1,1 @@
+We use SvelteKit 2 with Svelte 5 for the frontend framework, when you provide help with Svelte or SvelteKit, please use the documentation from this link: https://svelte-llm.khromov.se/svelte-complete-distilled
