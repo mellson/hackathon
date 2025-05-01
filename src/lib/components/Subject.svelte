@@ -136,7 +136,7 @@
 			onclick={onlike}
 		>
 			<div
-				class="relative before:absolute before:-inset-2.5 before:rounded-full before:transition-[background-color] before:group-hover:bg-pink-500/10"
+				class="relative before:absolute before:-inset-2.5 before:rounded-full before:transition-[background-color] group-hover:before:bg-pink-500/10"
 			>
 				<Heart
 					absoluteStrokeWidth
@@ -151,7 +151,7 @@
 	{/if}
 	{#if canBeEdited}
 		<button
-			class="float-end rounded bg-orange-400 px-2 py-1 text-xs hover:bg-orange-600 hover:shadow-lg"
+			class="float-end rounded-sm bg-orange-400 px-2 py-1 text-xs hover:bg-orange-600 hover:shadow-lg"
 			class:opacity-50={isCreatingSubject}
 			onclick={() => createSubject(internalSubject)}
 			disabled={isCreatingSubject}
