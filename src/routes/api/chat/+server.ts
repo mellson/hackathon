@@ -27,7 +27,7 @@ export const POST = (async ({ request, cookies }) => {
 	const existingSubjects = await db.select({ name: subjectsTable.name }).from(subjectsTable);
 
 	const result = streamText({
-		model: anthropic('claude-3-5-haiku-latest'),
+		model: anthropic('claude-4-sonnet-20250514'),
 		system: `
 		Du er en hjælpsom assistent som kan svare på spørgsmål om emner.
 		Får du spørgsmålet "Kan du fortælle mig lidt mere om hackathon dagen?" så tilføj følgende til sidst i dit svar: "Du kan spørge mig om flere detaljer, eller vi kan sparre om at finde på nogle sjove emner til dagen? Hvad har du lyst til?".

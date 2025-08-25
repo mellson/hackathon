@@ -36,13 +36,14 @@
 		"vite": "^6.3.4"
 	},
 	"dependencies": {
-		"@ai-sdk/anthropic": "^1.2.10",
-		"@ai-sdk/svelte": "^2.1.11",
-		"@neondatabase/serverless": "^1.0.0",
+		"@ai-sdk/anthropic": "^1.2.12",
+		"@ai-sdk/openai": "^1",
+		"@ai-sdk/svelte": "^2.1.12",
+		"@neondatabase/serverless": "^1.0.1",
 		"@number-flow/svelte": "^0.3.7",
 		"@tailwindcss/forms": "^0.5.10",
 		"@tailwindcss/typography": "^0.5.16",
-		"ai": "^4.3.13",
+		"ai": "^4.3.19",
 		"clsx": "^2.1.1",
 		"drizzle-orm": "^0.43.1",
 		"lucide-svelte": "^0.503.0",
