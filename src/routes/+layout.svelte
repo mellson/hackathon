@@ -7,6 +7,6 @@
 	<title>Hackathon emner</title>
 </svelte:head>
 
-<main class="container mx-auto h-screen max-w-(--breakpoint-lg) p-4">
+<main class="container mx-auto h-screen max-w-6xl p-4">
 	{@render children()}
 </main>

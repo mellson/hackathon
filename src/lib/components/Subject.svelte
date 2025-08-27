@@ -26,9 +26,21 @@
 	let internalSubject = $state(subject);
 	let canBeEdited = $state(editable);
 	let numberOfLikes = $state(subject.likes ?? 0);
-	let liked = $state(subject.deviceIds?.includes(getBrowserId() ?? '') ?? false);
 	let isLoading = $state(false);
 	let isCreatingSubject = $state(false);
+	
+	// Client-side only state to avoid hydration mismatch
+	let clientSideReady = $state(false);
+	let liked = $state(false);
+	
+	// Initialize client-side state after hydration
+	$effect(() => {
+		if (typeof window !== 'undefined') {
+			clientSideReady = true;
+			const browserId = getBrowserId();
+			liked = subject.deviceIds?.includes(browserId ?? '') ?? false;
+		}
+	});
 
 	const format: Format = {
 		notation: 'compact',
@@ -132,7 +144,7 @@
 	{#if internalSubject.likes !== undefined}
 		<button
 			class="group float-end flex items-center gap-1.5 pr-1.5 transition-[color] hover:text-pink-500"
-			class:text-pink-500={liked}
+			class:text-pink-500={clientSideReady && liked}
 			onclick={onlike}
 		>
 			<div
@@ -141,12 +153,16 @@
 				<Heart
 					absoluteStrokeWidth
 					class={clsx(
-						liked && 'fill-current',
+						clientSideReady && liked && 'fill-current',
 						'~size-4/5 group-active:spring-duration-[25] spring-bounce-[65] spring-duration-300 transition-transform group-active:scale-[80%]'
 					)}
 				/>
 			</div>
-			<NumberFlow willChange continuous value={numberOfLikes} {format} />
+			{#if clientSideReady}
+				<NumberFlow willChange continuous value={numberOfLikes} {format} />
+			{:else}
+				{numberOfLikes}
+			{/if}
 		</button>
 	{/if}
 	{#if canBeEdited}

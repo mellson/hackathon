@@ -5,9 +5,11 @@
 	import { GithubIcon } from 'lucide-svelte';
 
 	let { data } = $props();
-	// Always update subjects with the latest data from the server
-	subjects.length = 0; // Clear the array
-	subjects.push(...data.subjects);
+	
+	// Initialize subjects only if empty to avoid hydration mismatch
+	if (subjects.length === 0) {
+		subjects.push(...data.subjects);
+	}
 </script>
 
 <div class="grid h-full grid-cols-2 grid-rows-[1fr_auto_auto] gap-4">

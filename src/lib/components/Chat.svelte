@@ -41,9 +41,9 @@
 		}
 	});
 
-	// Handle initial message setup
+	// Handle initial message setup after hydration
 	$effect(() => {
-		if (chat.messages.length === 0) {
+		if (typeof window !== 'undefined' && chat.messages.length === 0) {
 			chat.sendMessage({ text: 'Kan du fortælle mig lidt mere om hackathon dagen?' });
 		}
 	});
