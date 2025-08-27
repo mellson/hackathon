@@ -1,6 +1,6 @@
-import type { Message } from '@ai-sdk/svelte';
+import type { UIMessage } from '@ai-sdk/svelte';
 
-export function formatRole(role: Message['role']): string {	
+export function formatRole(role: UIMessage['role']): string {
 	switch (role) {
 		case 'user':
 			return 'bruger';

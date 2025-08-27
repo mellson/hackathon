@@ -29,6 +29,8 @@ export const POST: RequestHandler = async ({ request, cookies }) => {
 		});
 		subject.emoji = result.text;
 	}
-	const [created] = await queryWithRetries(() => db.insert(subjectsTable).values(subject).returning());
+	const [created] = await queryWithRetries(() =>
+		db.insert(subjectsTable).values(subject).returning()
+	);
 	return json(created);
 };

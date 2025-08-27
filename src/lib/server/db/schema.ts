@@ -7,14 +7,18 @@ export const subjectsTable = pgTable('subject', {
 	description: text('description').notNull()
 });
 
-export const subjectLikesTable = pgTable('subject_likes', {
-	subjectId: integer('subject_id').references(() => subjectsTable.id),
-	deviceId: text('device_id').notNull()
-},(table) => {
-  return {
-    pk: primaryKey({ columns: [table.subjectId, table.deviceId] }),
-  };
-});
+export const subjectLikesTable = pgTable(
+	'subject_likes',
+	{
+		subjectId: integer('subject_id').references(() => subjectsTable.id),
+		deviceId: text('device_id').notNull()
+	},
+	(table) => {
+		return {
+			pk: primaryKey({ columns: [table.subjectId, table.deviceId] })
+		};
+	}
+);
 
 export type SelectSubject = typeof subjectsTable.$inferSelect;
 export type InsertSubject = typeof subjectsTable.$inferInsert;

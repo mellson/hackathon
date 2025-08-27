@@ -7,7 +7,6 @@
 	<p class="text-center text-gray-400">Indtast din hemmelige kode for at logge ind.</p>
 	<form method="POST" class="mx-16 w-full rounded-md bg-teal-700 p-2 text-white">
 		<input
-			autofocus
 			type="password"
 			name="password"
 			placeholder="Indtast din hemmelige kode"

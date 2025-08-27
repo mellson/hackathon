@@ -1,5 +1,6 @@
-import type { Message } from '@ai-sdk/svelte';
-import { z } from 'zod';
+import type { UIMessage } from '@ai-sdk/svelte';
+import { isToolOrDynamicToolUIPart } from 'ai';
+import { z } from 'zod/v3';
 
 const SubjectSchema = z.object({
 	name: z.string(),
@@ -7,11 +8,16 @@ const SubjectSchema = z.object({
 	emoji: z.string()
 });
 
-export function parseToolResult(toolInvocations: Message['toolInvocations']) {
+export function parseToolResult(messageParts: UIMessage['parts']) {
 	try {
-		const invocation = toolInvocations?.find((invocation) => invocation.state === 'result');
-		const subjectWithoutId = SubjectSchema.parse(invocation?.result);
-		return subjectWithoutId;
+		const toolPart = messageParts?.find(
+			(part) => isToolOrDynamicToolUIPart(part) && part.state === 'output-available'
+		);
+		if (toolPart && 'output' in toolPart) {
+			const subjectWithoutId = SubjectSchema.parse(toolPart.output);
+			return subjectWithoutId;
+		}
+		return null;
 	} catch (error) {
 		console.error('Failed to parse tool result:', error);
 		return null;

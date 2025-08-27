@@ -1,6 +1,6 @@
 import { createAnthropic } from '@ai-sdk/anthropic';
-import { streamText, tool } from 'ai';
-import { z } from 'zod';
+import { convertToModelMessages, streamText, tool } from 'ai';
+import { z } from 'zod/v3';
 import type { RequestHandler } from './$types';
 
 import { env } from '$env/dynamic/private';
@@ -25,6 +25,9 @@ export const POST = (async ({ request, cookies }) => {
 
 	const { messages } = await request.json();
 	const existingSubjects = await db.select({ name: subjectsTable.name }).from(subjectsTable);
+
+	// Convert UI messages to model messages
+	const modelMessages = convertToModelMessages(messages);
 
 	const result = streamText({
 		model: anthropic('claude-4-sonnet-20250514'),
@@ -53,19 +56,19 @@ export const POST = (async ({ request, cookies }) => {
 		`,
 		tools: {
 			subject: tool({
-				description: 'Create a new subject',
-				parameters: z.object({
-					name: z.string().describe('The name of the subject'),
-					description: z.string().describe('A description of the subject'),
-					emoji: z.string().describe('An emoji that represents the subject')
+				description: 'Opret et nyt emne',
+				inputSchema: z.object({
+					name: z.string().describe('Navnet på emnet'),
+					description: z.string().describe('En beskrivelse af emnet'),
+					emoji: z.string().describe('En emoji der repræsenterer emnet')
 				}),
 				execute: async ({ name, description, emoji }) => {
 					return { name, description, emoji };
 				}
 			})
 		},
-		messages
+		messages: modelMessages
 	});
 
-	return result.toDataStreamResponse();
+	return result.toUIMessageStreamResponse();
 }) satisfies RequestHandler;

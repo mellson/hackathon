@@ -17,27 +17,27 @@ export const db = drizzle(client);
  * @returns The result of the database operation
  */
 export async function queryWithRetries<T>(
-  operation: () => Promise<T>,
-  maxRetries = 3,
-  delay = 1000
+	operation: () => Promise<T>,
+	maxRetries = 3,
+	delay = 1000
 ): Promise<T> {
-  let lastError: unknown;
+	let lastError: unknown;
 
-  for (let attempt = 0; attempt <= maxRetries; attempt++) {
-    try {
-      return await operation();
-    } catch (error) {
-      lastError = error;
-      console.error(`Database operation failed (attempt ${attempt + 1}/${maxRetries + 1}):`, error);
+	for (let attempt = 0; attempt <= maxRetries; attempt++) {
+		try {
+			return await operation();
+		} catch (error) {
+			lastError = error;
+			console.error(`Database operation failed (attempt ${attempt + 1}/${maxRetries + 1}):`, error);
 
-      if (attempt < maxRetries) {
-        // Wait before retrying
-        await new Promise(resolve => setTimeout(resolve, delay));
-        // Increase delay for next attempt (exponential backoff)
-        delay *= 2;
-      }
-    }
-  }
+			if (attempt < maxRetries) {
+				// Wait before retrying
+				await new Promise((resolve) => setTimeout(resolve, delay));
+				// Increase delay for next attempt (exponential backoff)
+				delay *= 2;
+			}
+		}
+	}
 
-  throw lastError;
+	throw lastError;
 }
