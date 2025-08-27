@@ -12,6 +12,7 @@
 	});
 
 	let messagesContainer: HTMLUListElement;
+	let inputElement: HTMLInputElement;
 	let isLoading = $derived(chat.status !== 'ready');
 
 	// Auto-scroll pattern - runs after DOM updates
@@ -45,6 +46,13 @@
 	$effect(() => {
 		if (typeof window !== 'undefined' && chat.messages.length === 0) {
 			chat.sendMessage({ text: 'Kan du fortælle mig lidt mere om hackathon dagen?' });
+		}
+	});
+
+	// Auto-focus input field after mount and when not loading
+	$effect(() => {
+		if (typeof window !== 'undefined' && inputElement && !isLoading) {
+			inputElement.focus();
 		}
 	});
 </script>
@@ -129,6 +137,7 @@
 		class="grid w-full grid-cols-[1fr_auto] items-center gap-2 rounded-md bg-teal-700 p-1 text-white"
 	>
 		<input
+			bind:this={inputElement}
 			name="message"
 			placeholder="Chat med strømbot..."
 			disabled={isLoading}
