@@ -74,6 +74,47 @@
 				{/if}
 			</li>
 		{/each}
+
+		<!-- AI Thinking/Loading Indicator -->
+		{#if isLoading}
+			<li class="flex flex-col">
+				<div class="flex items-center gap-2 py-2">
+					<div
+						class="flex h-8 w-8 animate-pulse items-center justify-center rounded-full bg-teal-600"
+					>
+						<svg class="h-4 w-4 animate-spin text-white" fill="none" viewBox="0 0 24 24">
+							<circle
+								cx="12"
+								cy="12"
+								r="10"
+								stroke="currentColor"
+								stroke-width="4"
+								class="opacity-25"
+							></circle>
+							<path
+								fill="currentColor"
+								d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+								class="opacity-75"
+							></path>
+						</svg>
+					</div>
+					<div class="flex items-center gap-2">
+						<div class="font-medium text-teal-200">Strømbot tænker</div>
+						<div class="flex items-center gap-1">
+							<div
+								class="h-2 w-2 animate-bounce rounded-full bg-teal-400 [animation-delay:0ms]"
+							></div>
+							<div
+								class="h-2 w-2 animate-bounce rounded-full bg-teal-400 [animation-delay:150ms]"
+							></div>
+							<div
+								class="h-2 w-2 animate-bounce rounded-full bg-teal-400 [animation-delay:300ms]"
+							></div>
+						</div>
+					</div>
+				</div>
+			</li>
+		{/if}
 	</ul>
 	<form
 		onsubmit={(e) => {
@@ -90,7 +131,8 @@
 		<input
 			name="message"
 			placeholder="Chat med strømbot..."
-			class="border-none bg-transparent px-4 py-2 text-lg placeholder:text-teal-300 focus:ring-0"
+			disabled={isLoading}
+			class="border-none bg-transparent px-4 py-2 text-lg placeholder:text-teal-300 focus:ring-0 disabled:opacity-50 disabled:cursor-not-allowed"
 		/>
 
 		<TerminalIcon
