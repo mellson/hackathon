@@ -28,9 +28,13 @@ export const POST = (async ({ request, cookies }) => {
 
 	// Convert UI messages to model messages
 	const modelMessages = convertToModelMessages(messages);
+	const firstMessage = modelMessages.length === 1;
+	
+	// Brug en hurtig model til den første besked der ikke kræver tool calling
+	const model = firstMessage ? anthropic('claude-3-5-haiku-latest') : anthropic('claude-4-sonnet-20250514');
 
 	const result = streamText({
-		model: anthropic('claude-4-sonnet-20250514'),
+		model,
 		system: `
 		Du er en hjælpsom assistent som kan svare på spørgsmål om emner.
 		Får du spørgsmålet "Kan du fortælle mig lidt mere om hackathon dagen?" så tilføj følgende til sidst i dit svar: "Du kan spørge mig om flere detaljer, eller vi kan sparre om at finde på nogle sjove emner til dagen? Hvad har du lyst til?".
