@@ -13,53 +13,48 @@
 
 	let messagesContainer: HTMLUListElement;
 	let isLoading = $derived(chat.status !== 'ready');
-	let shouldAutoScroll = true;
 
-	// Track if user is near the bottom to enable/disable auto-scroll
-	function handleScroll() {
-		if (!messagesContainer) return;
-		const { scrollTop, scrollHeight, clientHeight } = messagesContainer;
-		shouldAutoScroll = scrollTop + clientHeight >= scrollHeight - 100;
-	}
+	// Auto-scroll pattern - runs after DOM updates
+	$effect(() => {
+		if (!messagesContainer) return; // not yet mounted
 
-	async function updateChat() {
-		await tick(); // Wait for DOM update
+		// Reference messages and their content so effect re-runs on changes
+		const _ignoredButRequiredInEffect = chat.messages
+			.flatMap((msg) => msg.parts)
+			.filter((part) => part.type === 'text')
+			.map((part) => part.text)
+			.join('');
 
-		// Send initial message if no messages exist
-		if (chat.messages.length === 0) {
-			chat.sendMessage({ text: 'Kan du fortælle mig lidt mere om hackathon dagen?' });
-			return;
-		}
+		// Check if we should auto-scroll (user is near bottom)
+		const shouldScroll =
+			messagesContainer.offsetHeight + messagesContainer.scrollTop >
+			messagesContainer.scrollHeight - 50;
 
-		// Auto-scroll if user is near the bottom
-		if (shouldAutoScroll && messagesContainer) {
-			messagesContainer.scrollTo({
-				top: messagesContainer.scrollHeight,
-				behavior: 'smooth'
+		if (shouldScroll) {
+			// Use tick to ensure DOM is fully updated, then scroll
+			tick().then(() => {
+				messagesContainer.scrollTo({
+					top: messagesContainer.scrollHeight,
+					behavior: 'smooth'
+				});
 			});
 		}
-	}
+	});
 
+	// Handle initial message setup
 	$effect(() => {
-		// React to changes in messages array and their content during streaming
-		// We need to access the actual text content to trigger on streaming updates
-		const lastMessage = chat.messages[chat.messages.length - 1];
-		const _ignored = lastMessage?.parts
-			?.filter((part) => part.type === 'text')
-			?.map((part) => part.text)
-			?.join('');
-
-		updateChat();
+		if (chat.messages.length === 0) {
+			chat.sendMessage({ text: 'Kan du fortælle mig lidt mere om hackathon dagen?' });
+		}
 	});
 </script>
 
 <div class="grid h-full grid-rows-[1fr_auto] gap-2 overflow-y-auto">
 	<ul
 		bind:this={messagesContainer}
-		onscroll={handleScroll}
 		class="flex h-full flex-col gap-1 overflow-y-auto pr-2 text-white"
 	>
-		{#each chat.messages as message}
+		{#each chat.messages as message, messageIndex (messageIndex)}
 			<li class="flex flex-col" class:text-gray-400={message.role === 'user'}>
 				<span class="text-xs font-thin opacity-50">{formatRole(message.role)}</span>
 				{#each message.parts as part}
