@@ -4,6 +4,7 @@
 	import { Chat } from '@ai-sdk/svelte';
 	import { DefaultChatTransport, isToolOrDynamicToolUIPart } from 'ai';
 	import { tick } from 'svelte';
+	import { fade } from 'svelte/transition';
 	import TerminalIcon from './icons/TerminalIcon.svelte';
 	import Subject from './Subject.svelte';
 
@@ -14,6 +15,8 @@
 	let messagesContainer: HTMLUListElement;
 	let inputElement: HTMLInputElement;
 	let isLoading = $derived(chat.status !== 'ready');
+	let showReloadButton = $state(false);
+	let loadingStartTime = $state(0);
 
 	// Auto-scroll pattern - runs after DOM updates
 	$effect(() => {
@@ -55,6 +58,26 @@
 			inputElement.focus();
 		}
 	});
+
+	// Track loading state and show reload button if stuck
+	$effect(() => {
+		if (isLoading && chat.messages.length < 2) {
+			if (loadingStartTime === 0) {
+				loadingStartTime = Date.now();
+			}
+
+			const timer = setTimeout(() => {
+				if (isLoading) {
+					showReloadButton = true;
+				}
+			}, 5000);
+
+			return () => clearTimeout(timer);
+		} else {
+			loadingStartTime = 0;
+			showReloadButton = false;
+		}
+	});
 </script>
 
 <div class="grid h-full grid-rows-[1fr_auto] gap-2 overflow-y-auto">
@@ -85,7 +108,7 @@
 
 		<!-- AI Thinking/Loading Indicator -->
 		{#if isLoading}
-			<li class="flex flex-col">
+			<li class="flex flex-col" transition:fade>
 				<div class="flex items-center gap-2 py-2">
 					<div
 						class="flex h-8 w-8 animate-pulse items-center justify-center rounded-full bg-teal-600"
@@ -123,6 +146,21 @@
 				</div>
 			</li>
 		{/if}
+
+		<!-- Reload Button for Stuck Loading -->
+		{#if showReloadButton}
+			<li class="flex flex-col items-center py-4" transition:fade>
+				<div class="text-center">
+					<p class="mb-2 text-sm text-red-300">Noget gik galt...</p>
+					<button
+						onclick={() => window.location.reload()}
+						class="rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-red-700"
+					>
+						Genindlæs siden
+					</button>
+				</div>
+			</li>
+		{/if}
 	</ul>
 	<form
 		onsubmit={(e) => {
@@ -141,7 +179,7 @@
 			name="message"
 			placeholder="Chat med strømbot..."
 			disabled={isLoading}
-			class="border-none bg-transparent px-4 py-2 text-lg placeholder:text-teal-300 focus:ring-0 disabled:opacity-50 disabled:cursor-not-allowed"
+			class="border-none bg-transparent px-4 py-2 text-lg placeholder:text-teal-300 focus:ring-0 disabled:cursor-not-allowed disabled:opacity-50"
 		/>
 
 		<TerminalIcon
