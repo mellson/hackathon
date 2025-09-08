@@ -26,3 +26,5 @@ vite.config.ts.timestamp-*
 
 # Playwright
 /.playwright-mcp
+
+devops_opgave.txt
