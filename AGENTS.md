@@ -6,7 +6,7 @@ This file provides guidance to AI assistants when working with code in this repo
 
 **Task Planning**: Use the TodoWrite tool to create detailed task plans before making any code changes. Break down complex tasks into smaller, manageable steps and track progress using the todo system.
 
-**Development Server**: Only start the development server when actively working on code changes that require testing in the browser. Check if a server is already running on port 5173 before starting a new one using `bash` tool.
+**Development Server**: Expect that the development server is already running, so you should be able to just open the browser at localhost:5173 to see the changes that you're making.
 
 **Code Quality**: After making changes, always run lint and typecheck commands if available to ensure code quality.
 
