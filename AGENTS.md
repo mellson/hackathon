@@ -12,7 +12,7 @@ This file provides guidance to AI assistants when working with code in this repo
 
 ## Available Tool Integrations
 
-**Azure DevOps Integration**: When users ask about work items, tasks, project management, or sprint planning, use the Azure DevOps tools (ado\_\*). The user's work items are typically located in the organizational path: `ENDK\IT\Innovation\Digital inkubator`.
+**Azure DevOps Integration**: When users ask about work items, tasks, project management, or sprint planning, use the Azure DevOps tools (ado\_\*). The user's work items are typically located in the project: `ENDK`.
 
 **Browser Automation**: For browser-based tasks including identifying UI elements, downloading images, visual testing, taking screenshots, or working on visual changes, use the Playwright tools (playwright*browser*\*). This includes:
 
