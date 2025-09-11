@@ -12,7 +12,7 @@ This file provides guidance to AI assistants when working with code in this repo
 
 ## Available Tool Integrations
 
-**Azure DevOps Integration**: When users ask about work items, tasks, project management, or sprint planning, use the Azure DevOps tools (ado\_\*). The user's work items are typically located in the project: `ENDK`.
+**Azure DevOps Integration**: When users ask about work items, tasks, project management, or sprint planning, use the Azure DevOps tools (ado\_\*). The user's work items are typically located in the project: `ENDK`. When you're finished implemented any work item, please add a comment to that item with a brief summary of what you did, in Danish. After you're done close the item.
 
 **Browser Automation**: For browser-based tasks including identifying UI elements, downloading images, visual testing, taking screenshots, or working on visual changes, use the Playwright tools (playwright*browser*\*). This includes:
 
@@ -99,3 +99,8 @@ Simple password-based authentication stored in session cookies. Login required t
 ## Danish Language Context
 
 The application is in Danish for Energinet employees. The AI assistant "Strømbot" helps brainstorm hackathon topics and knows specific details about the January 16, 2025 event at KulturØen in Middelfart.
+
+## Secrets
+
+When you're working with secrets never show them to the user.
+And always check your current context for any secrets before searching through files etc.
