@@ -12,7 +12,7 @@ This file provides guidance to AI assistants when working with code in this repo
 
 ## Available Tool Integrations
 
-**Azure DevOps Integration**: When users ask about work items, tasks, project management, or sprint planning, use the Azure DevOps tools (ado\_\*). The user's work items are typically located in the project: `ENDK`. When you're finished implemented any work item, please add a comment to that item with a brief summary of what you did, in Danish. After you're done close the item.
+**Azure DevOps Integration**: When users ask about work items, tasks, project management, or sprint planning, use the Azure DevOps tools (ado\_\*). The user's work items are typically located in the project: `ENDK`. When you're finished implemented any work item, please add a comment to that item with a brief summary of what you did, in Danish. After you're done close the item. The possible states for work items are: New, Active, Closed, Removed.
 
 **Browser Automation**: For browser-based tasks including identifying UI elements, downloading images, visual testing, taking screenshots, or working on visual changes, use the Playwright tools (playwright*browser*\*). This includes:
 
