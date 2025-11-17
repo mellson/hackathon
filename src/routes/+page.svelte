@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Chat from '$lib/components/Chat.svelte';
 	import Subject from '$lib/components/Subject.svelte';
+	import SecurityBanner from '$lib/components/SecurityBanner.svelte';
 	import { subjects } from '$lib/shared-data.svelte';
 	import { GithubIcon } from 'lucide-svelte';
 
@@ -40,3 +41,5 @@
 		>
 	</div>
 </div>
+
+<SecurityBanner />
